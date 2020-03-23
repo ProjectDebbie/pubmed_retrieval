@@ -43,6 +43,10 @@ def fetch_details(id_list):
                      abstract = str(article['Abstract']['AbstractText'][0]) + " " + str(article['Abstract']['AbstractText'][1]) + " " + str(article['Abstract']['AbstractText'][2]) + " " + str(article['Abstract']['AbstractText'][3])
                  if len(article['Abstract']['AbstractText']) == 5:
                      abstract = str(article['Abstract']['AbstractText'][0]) + " " + str(article['Abstract']['AbstractText'][1]) + " " + str(article['Abstract']['AbstractText'][2]) + " " + str(article['Abstract']['AbstractText'][3]) + " " + str(article['Abstract']['AbstractText'][4])
+                 if len(article['Abstract']['AbstractText']) == 6:
+                     abstract = str(article['Abstract']['AbstractText'][0]) + " " + str(article['Abstract']['AbstractText'][1]) + " " + str(article['Abstract']['AbstractText'][2]) + " " + str(article['Abstract']['AbstractText'][3]) + " " + str(article['Abstract']['AbstractText'][4]) + " " + str(article['Abstract']['AbstractText'][5])
+                 if len(article['Abstract']['AbstractText']) == 7:
+                     abstract = str(article['Abstract']['AbstractText'][0]) + " " + str(article['Abstract']['AbstractText'][1]) + " " + str(article['Abstract']['AbstractText'][2]) + " " + str(article['Abstract']['AbstractText'][3]) + " " + str(article['Abstract']['AbstractText'][4]) + " " + str(article['Abstract']['AbstractText'][5]) + " " + str(article['Abstract']['AbstractText'][6])
              else:
              	pass
          return str(str(pmid) + '\n' + str(year) + '\n' + str(title) + '\n' + str(abstract) + '\n')

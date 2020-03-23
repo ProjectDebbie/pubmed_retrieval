@@ -1,4 +1,0 @@
-32191952
-2020
-Using Digital Profileplasty for Surgical Planning.
-This paper describes a method for setting up an automated and reliable digital profileplasty technique for use in Adobe Photoshop. Digital imaging software can be used to extrapolate more exact measurements during profileplasty. The digital profileplasty technique is helpful to provide intraoperative guidance during surgery.
