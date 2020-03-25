@@ -3,7 +3,7 @@ from bio import Entrez
 #### search function will retrieve PMIDs published during specified time 
 # reldate = limit your search to only those items with a date within the last n days 
 # retmax = max amount of results wanted
-# datatype = determines which date field you wish to limit by
+# datatype = determines which date field you wish to limit by, I have it set for one week now
 def search(query):
     Entrez.email = 'amckitri@bsc.es'
     handle = Entrez.esearch(db='pubmed',  
