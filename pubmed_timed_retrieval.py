@@ -7,7 +7,7 @@ from bio import Entrez
 def search(query):
     Entrez.email = 'amckitri@bsc.es'
     handle = Entrez.esearch(db='pubmed',  
-                            retmax='20',
+                            retmax='100',
                             rettype="xml", retmode="text", 
                             term=query,
                             datetype='pdat',
@@ -31,6 +31,8 @@ def fetch_details(id_list):
              article = pubmed_article['MedlineCitation']['Article']
              try: year = pubmed_article['MedlineCitation']['Article']['Journal']['JournalIssue']['PubDate']['Year']
              except KeyError: year='NA'
+             try: month = pubmed_article['MedlineCitation']['Article']['Journal']['JournalIssue']['PubDate']['Month']
+             except KeyError: month=''
              title = article['ArticleTitle']
              if 'Abstract' in article:
                  if len(article['Abstract']['AbstractText']) == 1:
@@ -49,7 +51,7 @@ def fetch_details(id_list):
                      abstract = str(article['Abstract']['AbstractText'][0]) + " " + str(article['Abstract']['AbstractText'][1]) + " " + str(article['Abstract']['AbstractText'][2]) + " " + str(article['Abstract']['AbstractText'][3]) + " " + str(article['Abstract']['AbstractText'][4]) + " " + str(article['Abstract']['AbstractText'][5]) + " " + str(article['Abstract']['AbstractText'][6])
              else:
              	pass
-         return str(str(pmid) + '\n' + str(year) + '\n' + str(title) + '\n' + str(abstract) + '\n')
+         return (str(year) + ' ' + str(month) + '\n' + str(pmid) + '\n' + str(title) + '\n' + str(abstract))
 
 if __name__ == '__main__':
 	#only restrictions are if its a journal article and in english
