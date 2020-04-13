@@ -96,5 +96,3 @@ if __name__ == '__main__':
         file = open(filePath, 'w')
         file.write(results)
     print('Search Complete!\nNumber of results found:', counter)
-
-
