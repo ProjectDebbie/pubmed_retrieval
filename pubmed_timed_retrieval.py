@@ -1,5 +1,6 @@
 from bio import Entrez
 import argparse
+import os
 
 #### search function will retrieve PMIDs published during specified time 
 # reldate = limit your search to only those items with a date within the last n days 
@@ -67,9 +68,13 @@ if __name__ == '__main__':
     parser.add_argument('-OR', action='store_true', help= 'adds OR specification to term search')
     parser.add_argument('-AND', action='store_true', help= 'adds AND specification to term search')
     parser.add_argument('-term2', help= 'enter desired seach term, use '' around term')
+    parser.add_argument('-o', help= 'paste path to folder of output folder')
     #if term given, use term in search
     #if no term given, return only journal articles in english
     args = parser.parse_args()
+        #create output folder if not exist
+    if not os.path.exists(args.o):
+        os.makedirs(args.o)
     if (args.term == None):
         term_search = str('(("journal article"[Publication Type]) AND "english"[Language]) NOT "review"[Publication Type]')
         print('Finding...PubMed Journal Articles in English')
@@ -92,7 +97,7 @@ if __name__ == '__main__':
     for i in id_list:
         results = fetch_details(i)
         counter += 1
-        filePath = '/Users/austinmckitrick/git/debbie/pubmed_retrieval/abstracts/%s.txt' % (i)
+        filePath = args.o+"/"+'%s.txt' % (i)
         file = open(filePath, 'w')
         file.write(results)
     print('Search Complete!\nNumber of results found:', counter)
