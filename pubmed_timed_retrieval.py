@@ -9,7 +9,7 @@ import os
 def search(query):
     Entrez.email = 'amckitri@bsc.es'
     handle = Entrez.esearch(db='pubmed',  
-                            retmax='5',
+                            retmax='1100',
                             rettype="xml", retmode="text", 
                             term=query)
                             # ,
@@ -60,7 +60,9 @@ def fetch_details(id_list):
                  pass
         else:
             pass
-        return str(str(year) + ' ' + str(month) + '\n' + str(pmid) + '\n' + str(title) + '\n' + str(abstract))
+#only return records with abstract text
+        if len(abstract) != 0:
+            return str(str(year) + ' ' + str(month) + '\n' + str(pmid) + '\n' + str(title) + '\n' + str(abstract))
 if __name__ == '__main__':
     #add -term parameter
     parser = argparse.ArgumentParser()
@@ -96,8 +98,10 @@ if __name__ == '__main__':
     counter = 0
     for i in id_list:
         results = fetch_details(i)
-        counter += 1
-        filePath = args.o+"/"+'%s.txt' % (i)
-        file = open(filePath, 'w')
-        file.write(results)
+#only write files with those records with abstract text
+        if results != None:
+            counter += 1
+            filePath = args.o+"/"+'%s.txt' % (i)
+            file = open(filePath, 'w')
+            file.write(results)
     print('Search Complete!\nNumber of results found:', counter)
