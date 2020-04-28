@@ -1,7 +1,7 @@
-from bio import Entrez
+from Bio import Entrez
 import argparse
 import os
-
+import sys
 #### search function will retrieve PMIDs published during specified time 
 # reldate = limit your search to only those items with a date within the last n days 
 # retmax = max amount of results wanted
@@ -75,6 +75,9 @@ if __name__ == '__main__':
     #if no term given, return only journal articles in english
     args = parser.parse_args()
         #create output folder if not exist
+    if (args.o == None):
+       print("Please set the output folder")
+       sys.exit(1)
     if not os.path.exists(args.o):
         os.makedirs(args.o)
     if (args.term == None):
