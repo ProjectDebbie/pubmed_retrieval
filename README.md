@@ -1,52 +1,29 @@
-# pubmed_standardization
+# pubmed_retrieval
 
-This library takes the PubMed information stored in a working directory and standarize the information in plain text.
+This implementation of the Entrez module takes a desired time frame and retreives PMID, title, abstract, and publication date (month and year) of all records archived by PubMed over that period.  
 
 ## Description 
 
-The input directory contains the PubMeds *.gz files, so the first task executed for the library is unzip the files.  
 
-After unziped the files, the standardization begins,  the xml's PubMed that contains the articles are readed and generate for each article a PMIDXXX.txt.
 
-This library can be use as a step of a pipeline with the objective of generates plain text of the PubMed articles.
- 
-
-The actual format is of the plain text files is:
-
-year month
-pmid
-title
-abstract
-
-## Actual Version: 1.0, 2020-05-12
-## [Changelog](https://github.com/ProjectDebbie/pubmed_standardization/blob/master/CHANGELOG) 
-## Docker
-debbieproject/pubmed_standardization
 
 ## Run the Docker 
 	
-	#To run the docker, just set the input_folder and the output
-	docker run -v ${PWD}/pubmed:/in -v ${PWD}/standardization_output:/out pubmed_standardization:version python3 /app/pubmed_standardization.py -i /in -o /out
+	
 
-Parameters:
-<p>
--i input folder. Will process subfolder also.
-</p>
-<p>
--o output folder.
-</p>
+## Parameters:
+reldate = limit your search to items with a publication date in the last n days 
+retmax = maximum number of records allowed
+datatype = determines the date field you wish to limit 
 
 ## Built With
 
+* [Bio.Entrez](https://biopython.org/DIST/docs/api/Bio.Entrez-module.html)
 * [Docker](https://www.docker.com/) - Docker Containers
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/ProjectDebbie/pubmed_standardization/releases). 
 
 ## Authors
 
-* **Javier Corvi - Austin Mckitrick - Osnat Hakimi ** 
+* **Austin Mckitrick - Javier Corvi ** 
 
 
 ## License
