@@ -3,8 +3,9 @@
 This implementation of the Entrez module takes a desired time frame and retreives PMID, title, abstract, and publication date (month and year) of all records archived by PubMed over that period.  
 
 ## Description 
-
-
+The implementation contains 3 functions:
+1. The 'search' function retrieve PMIDs of records published during user's specified time frame (e.g.: the last 10 days)
+2. The 'fetch_details' function retireves information (PMID, title, abstract, and publication date- month and year) for each PMID. It is possible to include search terms for more specific retrieval. In this implementation, the function only writes to file jounral articles in English with abstract text.  
 
 
 ## Run the Docker 
