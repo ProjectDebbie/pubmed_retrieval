@@ -7,7 +7,7 @@ import sys
 # retmax = max amount of results wanted
 # datatype = determines which date field you wish to limit by, I have it set for one week now
 def search(query):
-    Entrez.email = 'amckitri@bsc.es'
+    Entrez.email = 'email@bsc.es'
     handle = Entrez.esearch(db='pubmed',  
                             retmax='1100',
                             rettype="xml", retmode="text", 
@@ -21,7 +21,7 @@ def search(query):
 # retrieves year, title, abstract text as of now
 def fetch_details(id_list):
     pmids = id_list
-    Entrez.email = 'amckitri@bsc.es'
+    Entrez.email = 'email@bsc.es'
     handle = Entrez.efetch(db='pubmed',
                            rettype='xml',
                            id=pmids, retmode="text")
