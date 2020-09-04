@@ -6,6 +6,10 @@ import sys
 # reldate = limit your search to only those items with a date within the last n days 
 # retmax = max amount of results wanted
 # datatype = determines which date field you wish to limit by, I have it set for one week now
+
+query = '((((((((Biomedical and dental materials[MeSH Terms]) OR (Prostheses and implants[MeSH Terms])) OR (Materials testing[MeSH Terms])) OR (Tissue engineering[MeSH Terms])) OR (Tissue scaffolds[MeSH Terms])) OR (Equipment safety[MeSH Terms])) OR (Medical device recalls[MeSH Terms])) OR (Biomaterials)) OR (Cell scaffolds)'
+
+
 def search(query):
     Entrez.email = 'email@bsc.es'
     handle = Entrez.esearch(db='pubmed',  
