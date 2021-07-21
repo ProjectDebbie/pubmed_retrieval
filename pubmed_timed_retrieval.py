@@ -70,7 +70,7 @@ def fetch_details(webenv, querykey, retstart, retmax, outputfolder, ids_list):
                             title = readTitle(article_xml.find('ArticleTitle'))
                             if(abstract!=''):
                                 with codecs.open(outputfolder+"/"+  pmid + '.txt', 'w',encoding='utf8') as txt_file:
-                                    txt_file.write(str(year) + ' ' + str(month) + '\n' + str(pmid) + '\n' + remove_invalid_characters(title) + '\n' + remove_invalid_characters(abstract) + '\n')
+                                    txt_file.write(str(year) + ' ' + str(month) + '\n' + remove_invalid_characters(title) + '\n' + remove_invalid_characters(abstract) + '\n')
                                     txt_file.flush()
                                     txt_file.close() 
                                     list_files_standardized.write(pmid + '.txt'+"\n")
