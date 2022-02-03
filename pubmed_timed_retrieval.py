@@ -54,27 +54,44 @@ def fetch_details(webenv, querykey, retstart, retmax, outputfolder, ids_list):
         with open(outputfolder+"/debbie_standardization_list_files_processed.dat",'a') as list_files_standardized:
             for article in docXml.findall("PubmedArticle"):
                 try:
-                    year = "NA"
+                    year = "0000"
                     month = ''
                     title = ''
                     pmid = article.find("MedlineCitation").find("PMID").text
                     if(pmid+'.txt' not in ids_list):
                         article_xml = article.find("MedlineCitation").find("Article")
-                        try: year = article_xml.find('Journal').find('JournalIssue').find('PubDate').find('Year').text
-                        except Exception: year ='NA'
+                        try: 
+                            year = article_xml.find('Journal').find('JournalIssue').find('PubDate').find('Year').text
+                        except Exception: 
+                            try: 
+                                medline_date = article_xml.find('Journal').find('JournalIssue').find('PubDate').find('MedlineDate').text
+                                year = medline_date[0:4]
+                            except Exception: 
+                                print("Error with year:  " + pmid)  
+                                year ='0000'
                         try: month = article_xml.find('Journal').find('JournalIssue').find('PubDate').find('Month').text
-                        except Exception: month=''
+                        except Exception: 
+                            try: 
+                                medline_date = article_xml.find('Journal').find('JournalIssue').find('PubDate').find('MedlineDate').text
+                                month = medline_date[5:]
+                            except Exception:  
+                                month =''
                         abstract_xml = article_xml.find("Abstract")
                         if(abstract_xml is not None):
                             abstract = readAbstract(abstract_xml)
                             title = readTitle(article_xml.find('ArticleTitle'))
                             if(abstract!=''):
                                 with codecs.open(outputfolder+"/"+  pmid + '.txt', 'w',encoding='utf8') as txt_file:
-                                    txt_file.write(str(year) + ' ' + str(month) + '\n' + remove_invalid_characters(title) + '\n' + remove_invalid_characters(abstract) + '\n')
+                                    txt_file.write(remove_invalid_characters(title) + '\n' + remove_invalid_characters(abstract) + '\n')
+                                    txt_file.flush()
+                                    txt_file.close() 
+                                with codecs.open(outputfolder+"/"+  pmid + '.meta', 'w',encoding='utf8') as txt_file:
+                                    txt_file.write(str(year) + ' ' + str(month) + '\n')
                                     txt_file.flush()
                                     txt_file.close() 
                                     list_files_standardized.write(pmid + '.txt'+"\n")
                                     list_files_standardized.flush()
+                                    
                         else:
                             print("Error with pmid no abstract:  " + pmid)      
                 except Exception as inst:
@@ -95,11 +112,12 @@ if __name__ == '__main__':
     if not os.path.exists(args.o):
         os.makedirs(args.o)
     if (args.q is not None):
-        term_search = query
+        term_search = args.q
         print('Searching in pubmed query:' + term_search)
     else:
-        print('Please set a query to search into pubmed:' + term_search)
-        sys.exit(1)
+        print('Warning: Default Query will be used: ' + query)
+        term_search = query
+        
     
     
     ids_list=[]
