@@ -10,6 +10,7 @@ import urllib
 # retmax = max amount of results wanted
 # datatype = determines which date field you wish to limit by, I have it set for one week now
 query = "((((((((Biomedical and dental materials[MeSH Terms]) OR (Prostheses and implants[MeSH Terms])) OR (Materials testing[MeSH Terms])) OR (Tissue engineering[MeSH Terms])) OR (Tissue scaffolds[MeSH Terms])) OR (Equipment safety[MeSH Terms])) OR (Medical device recalls[MeSH Terms])) OR (Biomaterials)) OR (Cell scaffolds)"
+#query_timed = '((((((((Biomedical and dental materials[MeSH Terms]) OR (Prostheses and implants[MeSH Terms])) OR (Materials testing[MeSH Terms])) OR (Tissue engineering[MeSH Terms])) OR (Tissue scaffolds[MeSH Terms])) OR (Equipment safety[MeSH Terms])) OR (Medical device recalls[MeSH Terms])) OR (Biomaterials)) OR (Cell scaffolds) AND "last 2 months" [crdt]'
 api_key="1cab2a4456d4e64e48a7c83a9cc9c101dc09"
 const_no_abstract = 0
 def remove_invalid_characters(text):
@@ -29,21 +30,32 @@ def readAbstract(abstract_xml):
     abstract = " ".join(abstract)  
     return abstract
 
-def search_query(query):
+def search_query(query,reldate):
     Entrez.email = 'email@bsc.es'
-    handle = Entrez.esearch(db='pubmed',  
-                            rettype="xml", 
-                            retmode="text", 
-                            term=query,
-                            usehistory="y")
+    if (reldate is not None):
+        handle = Entrez.esearch(db='pubmed',  
+                                rettype="xml", 
+                                retmode="text", 
+                                term=query,
+                                usehistory="y",
+                                reldate=reldate)
+    else:
+        handle = Entrez.esearch(db='pubmed',  
+                                rettype="xml", 
+                                retmode="text", 
+                                term=query,
+                                usehistory="y")
     results = Entrez.read(handle)
     return results
 
 #### fetch_details function will retireve information for each PMID it receives
 # retrieves year, title, abstract text as of now
-def fetch_details(webenv, querykey, retstart, retmax, outputfolder, ids_list):
+def fetch_details(webenv, querykey, retstart, retmax, outputfolder, ids_list, registry_file, reldate):
     url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi'
-    values = {'db':'pubmed', 'rettype':'xml', 'retmode':'xml', 'WebEnv':webenv, 'query_key':querykey, 'retstart':retstart,'retmax':retmax}
+    if (reldate is not None):
+        values = {'db':'pubmed', 'rettype':'xml', 'retmode':'xml', 'WebEnv':webenv, 'query_key':querykey, 'retstart':retstart, 'retmax':retmax, 'reldate':reldate}
+    else:
+        values = {'db':'pubmed', 'rettype':'xml', 'retmode':'xml', 'WebEnv':webenv, 'query_key':querykey, 'retstart':retstart, 'retmax':retmax}
     data = urllib.parse.urlencode(values)
     data = data.encode('ascii') # data should be bytes
     req = urllib.request.Request(url, data)
@@ -51,7 +63,7 @@ def fetch_details(webenv, querykey, retstart, retmax, outputfolder, ids_list):
         rpub = response.read()
         xmlResp = rpub.decode("utf-8") 
         docXml = ET.fromstring(xmlResp)
-        with open(outputfolder+"/debbie_standardization_list_files_processed.dat",'a') as list_files_standardized:
+        with open(registry_file,'a') as list_files_standardized:
             for article in docXml.findall("PubmedArticle"):
                 try:
                     year = "0000"
@@ -101,7 +113,11 @@ if __name__ == '__main__':
     #add -term parameter
     parser = argparse.ArgumentParser()
     parser.add_argument('-q', help= 'Pubmed query to retrieve abstracts')
-    parser.add_argument('-o', help= 'paste path to folder of output folder')
+    parser.add_argument('-o', help= 'Path to folder of output folder')
+    parser.add_argument('-r', help= 'Registry file to set the processed abstracts')
+    parser.add_argument('-d', help= 'reldate, Only abstract in the previous reldate will be retrieved, if not this will be a baseline (all time) abstracts search ')
+    
+    
     #if term given, use term in search
     #if no term given, return only journal articles in english
     args = parser.parse_args()
@@ -117,18 +133,29 @@ if __name__ == '__main__':
     else:
         print('Warning: Default Query will be used: ' + query)
         term_search = query
-        
+    if (args.r is None):
+        print("Please set the registry file to set the processed abstracts")
+        sys.exit(1)
     
+    reldate=None
+    if(args.d is not None):
+        reldate=args.d
+        print ("Only abstract in the previous " + reldate + " days added to Entrez will be returned in the search.")
+    else:
+        print ("No reldate is assigned, this will be a baseline (all time) abstracts search")
+        
+    print ("The registry file to review the updated abstracts is : " + args.r)
+    print ("Warning: Take into account that this file contains the already past execution processed files.")
     
     ids_list=[]
-    if(os.path.isfile(args.o+"/debbie_standardization_list_files_processed.dat")):
-        with open(args.o+"/debbie_standardization_list_files_processed.dat",'r') as ids:
+    if(os.path.isfile(args.r)):
+        with open(args.r,'r') as ids:
             for line in ids:
                 ids_list.append(line.replace("\n",""))
         ids.close()
     retstart = 0
     retmax = 10000
-    results = search_query(term_search)
+    results = search_query(term_search,reldate)
     webenv=results["WebEnv"]
     querykey=results["QueryKey"]
     count = int(results['Count'])
@@ -137,7 +164,7 @@ if __name__ == '__main__':
     first_time = True
     while (retstart < count):
         print ("Search from  " + str(retstart) +  " to " + str(retstart + retmax))
-        results = fetch_details(webenv, querykey, retstart, retmax, args.o, ids_list)
+        results = fetch_details(webenv, querykey, retstart, retmax, args.o, ids_list, args.r, reldate)
         retstart=retstart+retmax
     print("Finish process")
     
