@@ -92,8 +92,8 @@ def fetch_details(webenv, querykey, retstart, retmax, outputfolder, ids_list):
                                     list_files_standardized.write(pmid + '.txt'+"\n")
                                     list_files_standardized.flush()
                                     
-                        else:
-                            print("Error with pmid no abstract:  " + pmid)      
+                        #else:
+                            #print("Error with pmid no abstract:  " + pmid)      
                 except Exception as inst:
                     print("Error with pmid: " + pmid)
     
