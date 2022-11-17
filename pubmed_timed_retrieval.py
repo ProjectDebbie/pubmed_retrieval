@@ -162,9 +162,17 @@ if __name__ == '__main__':
     print ("Total abstracts in search query: " + str(count))
     search_while=True  
     first_time = True
+    counter=1
     while (retstart < count):
         print ("Search from  " + str(retstart) +  " to " + str(retstart + retmax))
-        results = fetch_details(webenv, querykey, retstart, retmax, args.o, ids_list, args.r, reldate)
+        subfolder = args.o
+        #just in case there were more than 10000, the folder split starts 
+        if(count>10000):
+            subfolder = args.o + "/abstracts_"+ str(counter)
+            if not os.path.exists(subfolder):
+                os.makedirs(subfolder)
+        results = fetch_details(webenv, querykey, retstart, retmax, subfolder, ids_list, args.r, reldate)
         retstart=retstart+retmax
+        counter = counter + 1
     print("Finish process")
     
